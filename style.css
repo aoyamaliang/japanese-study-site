@@ -1,0 +1,43 @@
+
+:root { --bg:#faf9f6; --fg:#2b2b2b; --muted:#8a8577; --line:#e4e0d5; --card:#fff;
+  --accent:#a0522d; --accent-soft:#f5ece4; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#1e1d1a; --fg:#e8e5de; --muted:#8f8a7c; --line:#3a382f; --card:#26241f;
+    --accent:#e0956b; --accent-soft:#332a22; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); line-height:1.9;
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",
+  "PingFang TC","Microsoft JhengHei",sans-serif; }
+header.site { position:sticky; top:0; background:var(--bg); border-bottom:1px solid var(--line);
+  padding:.55rem 1.2rem; font-size:.95rem; z-index:9; }
+header.site a { font-weight:600; }
+main { max-width:720px; margin:0 auto; padding:1.2rem 1.2rem 5rem; }
+h1 { font-size:1.4rem; }
+h2 { font-size:1.25rem; border-left:5px solid var(--accent); padding-left:.55rem; margin-top:2rem; }
+h3 { font-size:1.02rem; color:var(--accent); margin-bottom:.3rem; }
+h4 { font-size:1rem; }
+ruby rt { font-size:.55em; color:var(--muted); letter-spacing:0; }
+.date,.muted { color:var(--muted); font-size:.88rem; }
+.badge { display:inline-block; font-size:.72rem; font-weight:700; border-radius:8px;
+  padding:0 .45em; color:#fff; vertical-align:.12em; }
+.badge.N5{background:#7aa35c}.badge.N4{background:#5c8aa3}.badge.N3{background:#c2913a}
+.badge.N2{background:#b4674e}.badge.N1{background:#9c5cA3}
+details { background:var(--accent-soft); border-radius:10px; padding:.6rem .9rem; margin:.8rem 0; }
+summary { cursor:pointer; font-weight:600; }
+blockquote { border-left:4px solid var(--line); margin:.8rem 0; padding:.1rem .9rem;
+  color:var(--muted); }
+.tablewrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:.95rem; }
+th,td { border:1px solid var(--line); padding:.35rem .6rem; text-align:left; }
+th { background:var(--accent-soft); }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.deadlink { border-bottom:1px dotted var(--muted); }
+code { background:var(--accent-soft); border-radius:4px; padding:.05em .35em; font-size:.9em; }
+.cards { display:grid; gap:.7rem; padding:0; margin:.8rem 0; list-style:none; }
+.cards li { background:var(--card); border:1px solid var(--line); border-radius:12px; }
+.cards a { display:block; padding:.75rem 1rem; }
+.cards .sub { color:var(--muted); font-size:.85rem; font-weight:400; }
+ul.plain { list-style:none; padding:0; }
+ul.plain li { padding:.15rem 0; }
+footer { color:var(--muted); font-size:.8rem; margin-top:3rem; text-align:center; }

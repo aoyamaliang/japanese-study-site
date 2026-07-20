@@ -31,5 +31,80 @@
 <ol><li>お<ruby>茶<rt>ちゃ</rt></ruby>をよく<ruby>飲<rt>の</rt></ruby>みますか?どんなお<ruby>茶<rt>ちゃ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きですか?</li><li><ruby>台湾<rt>たいわん</rt></ruby>のお<ruby>茶<rt>ちゃ</rt></ruby>も<ruby>有名<rt>ゆうめい</rt></ruby>ですね。<ruby>外国<rt>がいこく</rt></ruby>の<ruby>友<rt>とも</rt></ruby>だちに、どの<ruby>台湾<rt>たいわん</rt></ruby>のお<ruby>茶<rt>ちゃ</rt></ruby>や<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>したいですか?</li><li><ruby>台湾<rt>たいわん</rt></ruby>の<ruby>物<rt>もの</rt></ruby>なのに、<ruby>外国<rt>がいこく</rt></ruby>で<ruby>偽物<rt>にせもの</rt></ruby>が<ruby>売<rt>う</rt></ruby>られていたら、どう<ruby>思<rt>おも</rt></ruby>いますか?</li></ol>
 <footer>更新:2026-07-20</footer>
 </main>
+<script>
+(function(){
+  var synth = window.speechSynthesis;
+  if (!synth) return;
+  var voice = null;
+  function pickVoice(){
+    var vs = synth.getVoices().filter(function(v){ return v.lang.indexOf('ja') === 0; });
+    voice = vs.find(function(v){ return /Google|Nanami|Keita|Kyoko|O-?ren/i.test(v.name); }) || vs[0] || null;
+  }
+  pickVoice();
+  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'));
+  var start = heads.find(function(h){ return h.textContent.trim() === '本文'; });
+  if (!start) return;
+  var paras = [];
+  var el = start.nextElementSibling;
+  while (el && el.tagName !== 'H2' && el.tagName !== 'H3') {
+    if (el.tagName === 'P') paras.push(el);
+    el = el.nextElementSibling;
+  }
+  if (!paras.length) return;
+
+  function speechText(p){
+    var c = p.cloneNode(true);
+    c.querySelectorAll('rt, .tts-btn').forEach(function(n){ n.remove(); });
+    var t = c.textContent;
+    t = t.replace(/[0-9０-９][0-9０-９,，.．]*[^\s(（。、]*[(（]([ぁ-ゖー]+)[)）]/g, '$1');
+    return t.trim();
+  }
+  function chunks(t){
+    var out = [], buf = '';
+    for (var i = 0; i < t.length; i++) {
+      buf += t[i];
+      if ('。!?！?'.indexOf(t[i]) >= 0) { out.push(buf); buf = ''; }
+    }
+    if (buf.trim()) out.push(buf);
+    return out.map(function(s){ return s.trim(); }).filter(Boolean);
+  }
+  var rate = 1;
+  function clearHi(){ document.querySelectorAll('p.speaking').forEach(function(e){ e.classList.remove('speaking'); }); }
+  function stop(){ synth.cancel(); clearHi(); }
+  function utter(text, p){
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP'; if (voice) u.voice = voice; u.rate = rate;
+    u.onstart = function(){ clearHi(); p.classList.add('speaking'); };
+    return u;
+  }
+  function speak(list){
+    stop();
+    var us = [];
+    list.forEach(function(p){ chunks(speechText(p)).forEach(function(c){ us.push(utter(c, p)); }); });
+    if (!us.length) return;
+    us[us.length - 1].onend = clearHi;
+    us.forEach(function(u){ synth.speak(u); });
+  }
+
+  var bar = document.createElement('div');
+  bar.className = 'tts-bar';
+  bar.innerHTML = '<button type="button" id="tts-all">▶ 朗讀全文</button>'
+    + '<button type="button" id="tts-stop">⏹ 停止</button>'
+    + '<label>速度 <select id="tts-rate"><option value="0.75">0.75×</option>'
+    + '<option value="1" selected>1×</option><option value="1.25">1.25×</option></select></label>';
+  start.after(bar);
+  bar.querySelector('#tts-all').onclick = function(){ speak(paras); };
+  bar.querySelector('#tts-stop').onclick = stop;
+  bar.querySelector('#tts-rate').onchange = function(e){ rate = parseFloat(e.target.value); };
+  paras.forEach(function(p){
+    var b = document.createElement('button');
+    b.className = 'tts-btn'; b.type = 'button'; b.textContent = '🔊'; b.title = '朗讀此段';
+    b.onclick = function(){ speak([p]); };
+    p.prepend(b);
+  });
+})();
+</script>
 </body>
 </html>

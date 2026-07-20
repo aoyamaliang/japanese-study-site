@@ -31,7 +31,7 @@
 <ol><li>お<ruby>茶<rt>ちゃ</rt></ruby>をよく<ruby>飲<rt>の</rt></ruby>みますか?どんなお<ruby>茶<rt>ちゃ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きですか?</li><li><ruby>台湾<rt>たいわん</rt></ruby>のお<ruby>茶<rt>ちゃ</rt></ruby>も<ruby>有名<rt>ゆうめい</rt></ruby>ですね。<ruby>外国<rt>がいこく</rt></ruby>の<ruby>友<rt>とも</rt></ruby>だちに、どの<ruby>台湾<rt>たいわん</rt></ruby>のお<ruby>茶<rt>ちゃ</rt></ruby>や<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>したいですか?</li><li><ruby>台湾<rt>たいわん</rt></ruby>の<ruby>物<rt>もの</rt></ruby>なのに、<ruby>外国<rt>がいこく</rt></ruby>で<ruby>偽物<rt>にせもの</rt></ruby>が<ruby>売<rt>う</rt></ruby>られていたら、どう<ruby>思<rt>おも</rt></ruby>いますか?</li></ol>
 <footer>更新:2026-07-20</footer>
 </main>
-<script>var AUDIO_SRC = "../audio/2026-07-20 「日本茶」国のブランド保護制度に登録.mp3";</script><script>
+<script>var AUDIO_SRC = "../audio/2026-07-20 「日本茶」国のブランド保護制度に登録.mp3"; var AUDIO_PARAS = 8;</script><script>
 (function(){
   var synth = window.speechSynthesis;
   if (!synth) return;
@@ -71,8 +71,15 @@
     return out.map(function(s){ return s.trim(); }).filter(Boolean);
   }
   var rate = 1;
+  var audio = null;      // 全文播放器
+  var paraAudio = null;  // 段落真人音檔
   function clearHi(){ document.querySelectorAll('p.speaking').forEach(function(e){ e.classList.remove('speaking'); }); }
-  function stop(){ synth.cancel(); clearHi(); }
+  function stop(){
+    synth.cancel();
+    if (paraAudio) { paraAudio.pause(); paraAudio = null; }
+    if (audio) audio.pause();
+    clearHi();
+  }
   function utter(text, p){
     var u = new SpeechSynthesisUtterance(text);
     u.lang = 'ja-JP'; if (voice) u.voice = voice; u.rate = rate;
@@ -102,16 +109,38 @@
     bar.querySelector('#tts-stop').onclick = stop;
   }
   start.after(bar);
-  var audio = bar.querySelector('audio');
+  audio = bar.querySelector('audio');
   bar.querySelector('#tts-rate').onchange = function(e){
     rate = parseFloat(e.target.value);
     if (audio) audio.playbackRate = rate;
+    if (paraAudio) paraAudio.playbackRate = rate;
   };
-  if (audio) audio.onplay = function(){ audio.playbackRate = rate; };
-  paras.forEach(function(p){
+  if (audio) audio.onplay = function(){
+    synth.cancel();
+    if (paraAudio) { paraAudio.pause(); paraAudio = null; }
+    clearHi();
+    audio.playbackRate = rate;
+  };
+
+  // 段落 🔊:優先播預產的真人音檔(.pN.mp3),缺檔才退回裝置語音
+  function playPara(i, p){
+    stop();
+    if (window.AUDIO_SRC && window.AUDIO_PARAS && i < window.AUDIO_PARAS) {
+      var base = window.AUDIO_SRC.replace(/\.mp3$/, '');
+      paraAudio = new Audio(base + '.p' + (i + 1) + '.mp3');
+      paraAudio.playbackRate = rate;
+      p.classList.add('speaking');
+      paraAudio.onended = clearHi;
+      paraAudio.onerror = function(){ clearHi(); speak([p]); };
+      paraAudio.play();
+    } else {
+      speak([p]);
+    }
+  }
+  paras.forEach(function(p, i){
     var b = document.createElement('button');
     b.className = 'tts-btn'; b.type = 'button'; b.textContent = '🔊'; b.title = '朗讀此段';
-    b.onclick = function(){ speak([p]); };
+    b.onclick = function(){ playPara(i, p); };
     p.prepend(b);
   });
 })();

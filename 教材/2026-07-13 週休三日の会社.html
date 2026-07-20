@@ -25,7 +25,7 @@
 <ol><li>もし<ruby>週休<rt>しゅうきゅう</rt></ruby>3<ruby>日<rt>か</rt></ruby>になったら、<ruby>休<rt>やす</rt></ruby>みの<ruby>日<rt>ひ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしたいですか?</li><li><ruby>週休<rt>しゅうきゅう</rt></ruby>3<ruby>日<rt>か</rt></ruby>のいいところは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか?</li><li><ruby>給料<rt>きゅうりょう</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>し<ruby>下<rt>さ</rt></ruby>がっても、<ruby>休<rt>やす</rt></ruby>みが<ruby>多<rt>おお</rt></ruby>いほうがいいですか?</li></ol>
 <footer>更新:2026-07-20</footer>
 </main>
-<script>var AUDIO_SRC = "../audio/2026-07-13 週休三日の会社.mp3";</script><script>
+<script>var AUDIO_SRC = "../audio/2026-07-13 週休三日の会社.mp3"; var AUDIO_PARAS = 3;</script><script>
 (function(){
   var synth = window.speechSynthesis;
   if (!synth) return;
@@ -65,8 +65,15 @@
     return out.map(function(s){ return s.trim(); }).filter(Boolean);
   }
   var rate = 1;
+  var audio = null;      // 全文播放器
+  var paraAudio = null;  // 段落真人音檔
   function clearHi(){ document.querySelectorAll('p.speaking').forEach(function(e){ e.classList.remove('speaking'); }); }
-  function stop(){ synth.cancel(); clearHi(); }
+  function stop(){
+    synth.cancel();
+    if (paraAudio) { paraAudio.pause(); paraAudio = null; }
+    if (audio) audio.pause();
+    clearHi();
+  }
   function utter(text, p){
     var u = new SpeechSynthesisUtterance(text);
     u.lang = 'ja-JP'; if (voice) u.voice = voice; u.rate = rate;
@@ -96,16 +103,38 @@
     bar.querySelector('#tts-stop').onclick = stop;
   }
   start.after(bar);
-  var audio = bar.querySelector('audio');
+  audio = bar.querySelector('audio');
   bar.querySelector('#tts-rate').onchange = function(e){
     rate = parseFloat(e.target.value);
     if (audio) audio.playbackRate = rate;
+    if (paraAudio) paraAudio.playbackRate = rate;
   };
-  if (audio) audio.onplay = function(){ audio.playbackRate = rate; };
-  paras.forEach(function(p){
+  if (audio) audio.onplay = function(){
+    synth.cancel();
+    if (paraAudio) { paraAudio.pause(); paraAudio = null; }
+    clearHi();
+    audio.playbackRate = rate;
+  };
+
+  // 段落 🔊:優先播預產的真人音檔(.pN.mp3),缺檔才退回裝置語音
+  function playPara(i, p){
+    stop();
+    if (window.AUDIO_SRC && window.AUDIO_PARAS && i < window.AUDIO_PARAS) {
+      var base = window.AUDIO_SRC.replace(/\.mp3$/, '');
+      paraAudio = new Audio(base + '.p' + (i + 1) + '.mp3');
+      paraAudio.playbackRate = rate;
+      p.classList.add('speaking');
+      paraAudio.onended = clearHi;
+      paraAudio.onerror = function(){ clearHi(); speak([p]); };
+      paraAudio.play();
+    } else {
+      speak([p]);
+    }
+  }
+  paras.forEach(function(p, i){
     var b = document.createElement('button');
     b.className = 'tts-btn'; b.type = 'button'; b.textContent = '🔊'; b.title = '朗讀此段';
-    b.onclick = function(){ speak([p]); };
+    b.onclick = function(){ playPara(i, p); };
     p.prepend(b);
   });
 })();

@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<header class="site"><a href="../index.html">🏠 日文讀書會</a></header>
+<header class="site"><a href="../index.html">🏠 日文讀書會</a><button type="button" id="furi-toggle">あ 假名:開</button></header>
 <main>
 <h2>受身形(〜られる)</h2>
 <p><strong>接續</strong>:一類動詞:ない形語幹 + れる(浮かぶ→浮かばれる ✗ 注意:浮かべる→浮かべられる)/二類動詞:語幹 + られる/する→される、来る→来られる</p>
@@ -21,6 +21,21 @@
 <ul><li><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></li><li><a href="../教材/2026-07-13 桃の食べ放題イベント.html">2026-07-13 桃の食べ放題イベント</a></li></ul>
 <footer>更新:2026-07-20</footer>
 </main>
-
+<script>
+(function(){
+  var KEY = 'furigana-off';
+  var btn = document.getElementById('furi-toggle');
+  function apply(){
+    var off = localStorage.getItem(KEY) === '1';
+    document.body.classList.toggle('no-furigana', off);
+    if (btn) btn.textContent = off ? 'あ 假名:關' : 'あ 假名:開';
+  }
+  if (btn) btn.onclick = function(){
+    localStorage.setItem(KEY, localStorage.getItem(KEY) === '1' ? '0' : '1');
+    apply();
+  };
+  apply();
+})();
+</script>
 </body>
 </html>

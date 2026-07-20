@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<header class="site"><a href="../index.html">🏠 日文讀書會</a></header>
+<header class="site"><a href="../index.html">🏠 日文讀書會</a><button type="button" id="furi-toggle">あ 假名:開</button></header>
 <main>
 <h2>量詞與數字讀法</h2>
 <p>朗讀最容易卡的就是數字。教材中實際出現過的先記,再附常錯對照表。</p>
@@ -21,6 +21,21 @@
 <div class="tablewrap"><table><tr><th>數量</th><th>読み</th><th>數量</th><th>読み</th></tr><tr><td>1個</td><td>いっこ</td><td>6個</td><td>ろっこ</td></tr><tr><td>2個</td><td>にこ</td><td>8個</td><td>はっこ/はちこ</td></tr><tr><td>3個</td><td>さんこ</td><td>10個</td><td>じゅっこ</td></tr><tr><td>4個</td><td>よんこ</td><td>100個</td><td>ひゃっこ</td></tr></table></div>
 <footer>更新:2026-07-20</footer>
 </main>
-
+<script>
+(function(){
+  var KEY = 'furigana-off';
+  var btn = document.getElementById('furi-toggle');
+  function apply(){
+    var off = localStorage.getItem(KEY) === '1';
+    document.body.classList.toggle('no-furigana', off);
+    if (btn) btn.textContent = off ? 'あ 假名:關' : 'あ 假名:開';
+  }
+  if (btn) btn.onclick = function(){
+    localStorage.setItem(KEY, localStorage.getItem(KEY) === '1' ? '0' : '1');
+    apply();
+  };
+  apply();
+})();
+</script>
 </body>
 </html>

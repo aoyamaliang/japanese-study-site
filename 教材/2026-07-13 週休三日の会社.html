@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<header class="site"><a href="../index.html">🏠 日文讀書會</a></header>
+<header class="site"><a href="../index.html">🏠 日文讀書會</a><button type="button" id="furi-toggle">あ 假名:開</button></header>
 <main>
 <p class="date">📅 2026-07-13</p><h2>週休3日の会社が増えている</h2>
 <h3>本文</h3>
@@ -25,7 +25,7 @@
 <ol><li>もし<ruby>週休<rt>しゅうきゅう</rt></ruby>3<ruby>日<rt>か</rt></ruby>になったら、<ruby>休<rt>やす</rt></ruby>みの<ruby>日<rt>ひ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしたいですか?</li><li><ruby>週休<rt>しゅうきゅう</rt></ruby>3<ruby>日<rt>か</rt></ruby>のいいところは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか?</li><li><ruby>給料<rt>きゅうりょう</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>し<ruby>下<rt>さ</rt></ruby>がっても、<ruby>休<rt>やす</rt></ruby>みが<ruby>多<rt>おお</rt></ruby>いほうがいいですか?</li></ol>
 <footer>更新:2026-07-20</footer>
 </main>
-<script>
+<script>var AUDIO_SRC = "../audio/2026-07-13 週休三日の会社.mp3";</script><script>
 (function(){
   var synth = window.speechSynthesis;
   if (!synth) return;
@@ -84,20 +84,45 @@
 
   var bar = document.createElement('div');
   bar.className = 'tts-bar';
-  bar.innerHTML = '<button type="button" id="tts-all">▶ 朗讀全文</button>'
-    + '<button type="button" id="tts-stop">⏹ 停止</button>'
-    + '<label>速度 <select id="tts-rate"><option value="0.75">0.75×</option>'
+  var rateSel = '<label>速度 <select id="tts-rate"><option value="0.75">0.75×</option>'
     + '<option value="1" selected>1×</option><option value="1.25">1.25×</option></select></label>';
+  if (window.AUDIO_SRC) {
+    bar.innerHTML = '<span title="真人感朗讀(預先產生)">🎧</span>'
+      + '<audio controls preload="none" src="' + window.AUDIO_SRC + '"></audio>' + rateSel;
+  } else {
+    bar.innerHTML = '<button type="button" id="tts-all">▶ 朗讀全文</button>'
+      + '<button type="button" id="tts-stop">⏹ 停止</button>' + rateSel;
+    bar.querySelector('#tts-all').onclick = function(){ speak(paras); };
+    bar.querySelector('#tts-stop').onclick = stop;
+  }
   start.after(bar);
-  bar.querySelector('#tts-all').onclick = function(){ speak(paras); };
-  bar.querySelector('#tts-stop').onclick = stop;
-  bar.querySelector('#tts-rate').onchange = function(e){ rate = parseFloat(e.target.value); };
+  var audio = bar.querySelector('audio');
+  bar.querySelector('#tts-rate').onchange = function(e){
+    rate = parseFloat(e.target.value);
+    if (audio) audio.playbackRate = rate;
+  };
+  if (audio) audio.onplay = function(){ audio.playbackRate = rate; };
   paras.forEach(function(p){
     var b = document.createElement('button');
     b.className = 'tts-btn'; b.type = 'button'; b.textContent = '🔊'; b.title = '朗讀此段';
     b.onclick = function(){ speak([p]); };
     p.prepend(b);
   });
+})();
+</script><script>
+(function(){
+  var KEY = 'furigana-off';
+  var btn = document.getElementById('furi-toggle');
+  function apply(){
+    var off = localStorage.getItem(KEY) === '1';
+    document.body.classList.toggle('no-furigana', off);
+    if (btn) btn.textContent = off ? 'あ 假名:關' : 'あ 假名:開';
+  }
+  if (btn) btn.onclick = function(){
+    localStorage.setItem(KEY, localStorage.getItem(KEY) === '1' ? '0' : '1');
+    apply();
+  };
+  apply();
 })();
 </script>
 </body>

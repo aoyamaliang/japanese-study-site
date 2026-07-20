@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<header class="site"><a href="../index.html">🏠 日文讀書會</a></header>
+<header class="site"><a href="../index.html">🏠 日文讀書會</a><button type="button" id="furi-toggle">あ 假名:開</button></header>
 <main>
 <h2>新聞常用詞</h2>
 <p>NHK 新聞(含 Easy News)反覆出現的詞,認得這些讀新聞會快很多。跨週累積,遇到新的往下加。</p>
@@ -20,6 +20,21 @@
 <div class="tablewrap"><table><tr><th>單字</th><th>読み</th><th>意思</th><th>出處</th></tr><tr><td>増えている</td><td>ふえている</td><td>正在增加(新聞標題常見)</td><td><a href="../教材/2026-07-13 週休三日の会社.html">2026-07-13 週休三日の会社</a></td></tr><tr><td>制度</td><td>せいど</td><td>制度</td><td><a href="../教材/2026-07-13 週休三日の会社.html">2026-07-13 週休三日の会社</a></td></tr><tr><td>専門家</td><td>せんもんか</td><td>專家</td><td><a href="../教材/2026-07-13 週休三日の会社.html">2026-07-13 週休三日の会社</a></td></tr><tr><td>基準</td><td>きじゅん</td><td>基準、標準</td><td><a href="../教材/2026-07-13 桃の食べ放題イベント.html">2026-07-13 桃の食べ放題イベント</a></td></tr><tr><td>測定</td><td>そくてい</td><td>測定</td><td><a href="../教材/2026-07-13 桃の食べ放題イベント.html">2026-07-13 桃の食べ放題イベント</a></td></tr><tr><td>提供</td><td>ていきょう</td><td>提供</td><td><a href="../教材/2026-07-13 桃の食べ放題イベント.html">2026-07-13 桃の食べ放題イベント</a></td></tr><tr><td>規格外</td><td>きかくがい</td><td>不合規格(的農產品)</td><td><a href="../教材/2026-07-13 桃の食べ放題イベント.html">2026-07-13 桃の食べ放題イベント</a></td></tr><tr><td>〜が盛ん</td><td>さかん</td><td>〜很興盛、盛產</td><td><a href="../教材/2026-07-13 桃の食べ放題イベント.html">2026-07-13 桃の食べ放題イベント</a></td></tr><tr><td>登録</td><td>とうろく</td><td>登錄、註冊</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>保護</td><td>ほご</td><td>保護</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>団体</td><td>だんたい</td><td>團體</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>輸出</td><td>ゆしゅつ</td><td>出口(⇄輸入=ゆにゅう)</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>過去最高を更新</td><td>かこさいこうをこうしん</td><td>刷新歷史新高(報數字必出)</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>拡大</td><td>かくだい</td><td>擴大</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>出回る</td><td>でまわる</td><td>(商品)上市、流通</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr><tr><td>追い風</td><td>おいかぜ</td><td>順風;(比喻)利多、助力</td><td><a href="../教材/2026-07-20 「日本茶」国のブランド保護制度に登録.html">2026-07-20 「日本茶」国のブランド保護制度に登録</a></td></tr></table></div>
 <footer>更新:2026-07-20</footer>
 </main>
-
+<script>
+(function(){
+  var KEY = 'furigana-off';
+  var btn = document.getElementById('furi-toggle');
+  function apply(){
+    var off = localStorage.getItem(KEY) === '1';
+    document.body.classList.toggle('no-furigana', off);
+    if (btn) btn.textContent = off ? 'あ 假名:關' : 'あ 假名:開';
+  }
+  if (btn) btn.onclick = function(){
+    localStorage.setItem(KEY, localStorage.getItem(KEY) === '1' ? '0' : '1');
+    apply();
+  };
+  apply();
+})();
+</script>
 </body>
 </html>

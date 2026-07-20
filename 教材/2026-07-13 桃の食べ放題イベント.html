@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<header class="site"><a href="../index.html">🏠 日文讀書會</a></header>
+<header class="site"><a href="../index.html">🏠 日文讀書會</a><button type="button" id="furi-toggle">あ 假名:開</button></header>
 <main>
 <p class="date">📅 2026-07-13</p><h2><ruby>今<rt>いま</rt></ruby>が<ruby>旬<rt>しゅん</rt></ruby> <ruby>桃<rt>もも</rt></ruby>の「<ruby>食<rt>た</rt></ruby>べ<ruby>放題<rt>ほうだい</rt></ruby>」イベント<ruby>始<rt>はじ</rt></ruby>まる <ruby>山梨<rt>やまなし</rt></ruby> <ruby>南<rt>みなみ</rt></ruby>アルプス</h2>
 <blockquote><p>💡 數字的讀音用括號標示(這篇正好可以練日期與量詞的唸法)</p></blockquote>
@@ -31,7 +31,7 @@
 <ol><li><ruby>桃<rt>もも</rt></ruby>は<ruby>好<rt>す</rt></ruby>きですか?<ruby>果物<rt>くだもの</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>何<rt>なに</rt></ruby>が<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きですか?</li><li>「<ruby>食<rt>た</rt></ruby>べ<ruby>放題<rt>ほうだい</rt></ruby>」に<ruby>行<rt>い</rt></ruby>ったことがありますか?<ruby>何<rt>なに</rt></ruby>を<ruby>食<rt>た</rt></ruby>べましたか?</li><li>あなたなら<ruby>桃<rt>もも</rt></ruby>を<ruby>何個<rt>なんこ</rt></ruby><ruby>食<rt>た</rt></ruby>べられると<ruby>思<rt>おも</rt></ruby>いますか?<ruby>目標<rt>もくひょう</rt></ruby>は?</li></ol>
 <footer>更新:2026-07-20</footer>
 </main>
-<script>
+<script>var AUDIO_SRC = "../audio/2026-07-13 桃の食べ放題イベント.mp3";</script><script>
 (function(){
   var synth = window.speechSynthesis;
   if (!synth) return;
@@ -90,20 +90,45 @@
 
   var bar = document.createElement('div');
   bar.className = 'tts-bar';
-  bar.innerHTML = '<button type="button" id="tts-all">▶ 朗讀全文</button>'
-    + '<button type="button" id="tts-stop">⏹ 停止</button>'
-    + '<label>速度 <select id="tts-rate"><option value="0.75">0.75×</option>'
+  var rateSel = '<label>速度 <select id="tts-rate"><option value="0.75">0.75×</option>'
     + '<option value="1" selected>1×</option><option value="1.25">1.25×</option></select></label>';
+  if (window.AUDIO_SRC) {
+    bar.innerHTML = '<span title="真人感朗讀(預先產生)">🎧</span>'
+      + '<audio controls preload="none" src="' + window.AUDIO_SRC + '"></audio>' + rateSel;
+  } else {
+    bar.innerHTML = '<button type="button" id="tts-all">▶ 朗讀全文</button>'
+      + '<button type="button" id="tts-stop">⏹ 停止</button>' + rateSel;
+    bar.querySelector('#tts-all').onclick = function(){ speak(paras); };
+    bar.querySelector('#tts-stop').onclick = stop;
+  }
   start.after(bar);
-  bar.querySelector('#tts-all').onclick = function(){ speak(paras); };
-  bar.querySelector('#tts-stop').onclick = stop;
-  bar.querySelector('#tts-rate').onchange = function(e){ rate = parseFloat(e.target.value); };
+  var audio = bar.querySelector('audio');
+  bar.querySelector('#tts-rate').onchange = function(e){
+    rate = parseFloat(e.target.value);
+    if (audio) audio.playbackRate = rate;
+  };
+  if (audio) audio.onplay = function(){ audio.playbackRate = rate; };
   paras.forEach(function(p){
     var b = document.createElement('button');
     b.className = 'tts-btn'; b.type = 'button'; b.textContent = '🔊'; b.title = '朗讀此段';
     b.onclick = function(){ speak([p]); };
     p.prepend(b);
   });
+})();
+</script><script>
+(function(){
+  var KEY = 'furigana-off';
+  var btn = document.getElementById('furi-toggle');
+  function apply(){
+    var off = localStorage.getItem(KEY) === '1';
+    document.body.classList.toggle('no-furigana', off);
+    if (btn) btn.textContent = off ? 'あ 假名:關' : 'あ 假名:開';
+  }
+  if (btn) btn.onclick = function(){
+    localStorage.setItem(KEY, localStorage.getItem(KEY) === '1' ? '0' : '1');
+    apply();
+  };
+  apply();
 })();
 </script>
 </body>
